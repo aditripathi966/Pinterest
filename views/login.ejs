@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/stylesheets/style.css">
-</head>
-<body>
+<%- include("partials/header.ejs")%>
     <div class="container">
         <div class="content">
             <img src="https://i.pinimg.com/originals/d3/d1/75/d3d175e560ae133f1ed5cd4ec173751a.png" alt="pin logo" class="img1" />
@@ -22,7 +14,7 @@
                 <input class="btn int" type="submit" value="Login my account">
             </form>
 
-            <a href="/forgot">Forgot your password?</a>
+            <a class="link" href="/forgetpw">Forgot your password?</a>
 
             <footer>
                 <p>
@@ -35,7 +27,4 @@
             </footer>
         </div>
     </div>
-    
-    <script src="/javascripts/script.js"></script>
-</body>
-</html>
+    <%- include("partials/footer.ejs")%>

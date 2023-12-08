@@ -127,6 +127,14 @@ h4 {
     text-decoration: none;
     color: black;
 }
+.btn{
+    background-color: #e60023;
+    color: white;
+    font-weight: 500;
+}
+.btn:hover{
+     background-color: #c72f46;
+}
 
 footer p {
   font-size: 12px;

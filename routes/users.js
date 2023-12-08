@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   fullname: { type: String, required: true },
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+  passwordResetToken: {
+    type: Number,
+    default: 0,
+},
  
 });
 

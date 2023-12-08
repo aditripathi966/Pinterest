@@ -1,0 +1,12 @@
+<%- include("partials/header.ejs")%>
+<form class="m-auto w-25 mt-5" action="/forgetpw" method="post">
+
+   <h1 class="mb-4">Enter Existing Mail</h1>
+      
+   <input required class="form-control mb-3" type="text" placeholder="example@johndoe.com" name="email"> 
+   <button class="btn btn-primary w-23">Send mail</button>
+   <br>
+   <p><a class="link" href="/login">signin</a> | <a class="link" href="/">signup</a></p>
+</form>
+ <%- include("partials/footer.ejs")%>
+
