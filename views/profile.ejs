@@ -1,24 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest</title>
-    <link rel="icon" href="https://static-00.iconduck.com/assets.00/pinterest-icon-512x511-e2czduq2.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/profile.css">
+
+<%- include("partials/header.ejs")%>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .containerr {
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .cardd{
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .flex{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: start;
+}
+  
+  .profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 20px;
+  }
+  
+  .profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .name {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .username {
+    font-size: 18px;
+    color: #777;
+    margin: 10px 0;
+  }
+  
+  .tagline,
+  .description {
+    color: #555;
+    margin: 10px 0;
+  }
+  
+  .buttonn{
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #dd140a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 15px;
+    transition: background-color 0.3s;
+  }
+  
+  .buttonn:hover {
+    background-color: #a2241e;
+    color: white;
+  }
+  
+        body {
+            background-color: #000;
+        }
+        .cardd {
+            background-color: #1a1a1a;
+        }
+        .profile-container {
+            position: relative;
+        }
+        .profile-picture img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .edit-icon {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            color: #000;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .name,
+        .username {
+            color: #fff;
+        }
+        .buttonn {
+            background-color: #e60023;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .cards {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="containerr">
+    <div class="container">
         <div class="cardd">
-          <div class="profile-picture">
-            <img src="https://images.unsplash.com/photo-1699459867100-4ecf9eceb0e5?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Profile Picture">
-          </div>
-          <h3 class="username"><%=user.fullname%></h3>
-          <h2 class="name"><%=user.username%></h2>
-          <p class="tagline">Lorem ipsum dolor sit amet consectetur adipisicing.</p>
-          <p class="description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam.</p>
-          <a href="/logout" class="buttonn">Logout</a>
-           <br>
-           <br>
- <%- include("partials/footer.ejs")%>
+            <div class="profile-container">
+              <form id="uploadform" hidden action="/fileupload" method="post" enctype="multipart/form-data">
+                <input type="file" name="image">
+              </form>
+                <div class="profile-picture">
+                    <img src="/images/uploads/<%=user.profileImage%>" alt="Profile Picture">
+                    <button id="edit-icon2" class="edit-icon text-decoration-none">✏️</button>
+                </div>
+            </div>
+            <h2 class="name"><%=user.username%></h2>
+            <h3 class="username bg-zinc-700 opacity-20"><%=user.fullname%></h3>
+            <a class="px-3 py-2 rounded-lg bg-gray-700 text-xs font-semibold text-white text-decoration-none" href="/edituser/<%= user._id %>">Edit</a>
+            <br><br>
+            <a href="/add" class=" px-10 py-2 rounded-lg bg-red-700 text-xs font-semibold text-white text-decoration-none ">Add New Post</a>
+            <br><br>
+            <div class="cards flex flex-wrap gap-10 px-10 mt-10">
+                <!-- Example Pin Card -->
+                <div class="w-48 h-56 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="/images/uploads/<%=user?.posts[0]?.image %>" alt="Pin Image" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <a href="/show/posts" class="text-white text-sm font-semibold mb-2 text-decoration-none">Your Uploaded Pins</a>
+                        <p class="text-gray-400 text-xs"><%=user.posts.length%> Pins</p>
+                    </div>
+                </div>
+                <!-- Repeat this block for additional pins -->
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector("#edit-icon2").addEventListener("click",function(){
+                  document.querySelector("#uploadform input").click();
+        })
+        document.querySelector("#uploadform input").addEventListener("change",function(){
+                    document.querySelector("#uploadform").submit();
+        })
+    </script>
+    <%- include("partials/footer.ejs")%>

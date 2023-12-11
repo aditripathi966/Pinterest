@@ -58,11 +58,11 @@ body {
   
   .buttonn{
     display: inline-block;
-    padding: 10px 10px;
+    padding: 10px 18px;
     background-color: #dd140a;
     color: #fff;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 15px;
     transition: background-color 0.3s;
   }
   

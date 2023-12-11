@@ -3,37 +3,115 @@ var router = express.Router();
 const localStrategy = require("passport-local");
 const passport = require("passport");
 const userModel = require("./users");
+const postModel = require("./posts")
 passport.use(new localStrategy(userModel.authenticate()));
 
 const { sendmail } = require("../utils/mail");
 
 const multer = require("../utils/multer");
+const upload = require("../utils/multer");
 
 // const { profilepanel, } = require("../controller/usercontroller");
 
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Express" });
+  res.render("index",   {nav:false});
 });
 
 router.get("/login", function (req, res, next) {
-  res.render("login", { error: req.flash("error") });
+  res.render("login", { error: req.flash("error"), nav: false });
+});
+
+router.get("/add",isLoggedIn, async function (req, res, next) {
+  const user = await userModel.findOne({ username: req.session.passport.user,});
+  res.render("add", {user,nav:true});
+});
+
+router.get("/edituser/:id",isLoggedIn, async function (req, res, next) {
+    try {
+      const currentuser = await userModel.findOne({
+        _id: req.params.id
+      })
+      res.render("edituser",{user:currentuser,user:req.user,nav:true})
+    } catch (error) {
+      res.send(error)
+    }
+});
+
+router.post("/edit/:userid", isLoggedIn, async function (req, res, next) {
+  try {
+    var currentUser = await userModel.findByIdAndUpdate(
+      req.params.userid,
+      {
+        username: req.body.username,
+        fullname: req.body.fullname
+      },
+      { new: true }
+    );
+
+    // Redirect to the profile page
+    res.redirect("/profile");
+  } catch (error) {
+    // Handle the error appropriately, maybe log it
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
+router.get("/feed",async function (req, res, next) {
+  const user = await userModel.findOne({ username: req.session.passport.user,});
+  const posts = await postModel.find()
+  .populate("user")
+
+  res.render("feed",{user,posts,nav:true})
+});
+
+router.post("/createpost",isLoggedIn,upload.single("postimage") ,async function (req, res, next) {
+  const user = await userModel.findOne({ username: req.session.passport.user,});
+  const post = await postModel.create({
+    user: user._id,
+    title: req.body.title,
+    description:req.body.description,
+    image: req.file.filename
+  });
+    user.posts.push(post._id)
+    await user.save();
+    res.redirect("/profile")
 });
 
 router.get("/profile", isLoggedIn, async function (req, res, next) {
   try {
     const user = await userModel.findOne({
       username: req.session.passport.user,
-    });
+    }).populate("posts")
 
     if (!user) {
       return res.status(404).send("User not found");
     }
-
-    res.render("profile", { user });
+    
+    res.render("profile", { user, nav: true });
   } catch (error) {
     next(error);
   }
 });
+router.get("/show/posts", isLoggedIn, async function (req, res, next) {
+  try {
+    const user = await userModel.findOne({
+      username: req.session.passport.user,
+    }).populate("posts")
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    
+    res.render("show", { user, nav: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 router.post("/register", function (req, res, next) {
   const { username, email, fullname, password } = req.body;
@@ -66,6 +144,7 @@ router.get("/logout", function (req, res) {
       return next(err);
     }
     res.redirect("/login");
+    {nav:true}
   });
 });
 
@@ -78,7 +157,7 @@ function isLoggedIn(req, res, next) {
 // other route 
 
 router.get("/forgetpw", function (req, res) {
-  res.render("forgetpw"); // Assuming your EJS file is named "forgetpw.ejs"
+  res.render("forgetpw",  {nav:true}); // Assuming your EJS file is named "forgetpw.ejs"
 });
 
 // Forget Password Route - POST
@@ -101,7 +180,7 @@ router.post("/forgetpw", multer.none(), async function (req, res, next) {
 // Change Password Route - GET
 router.get("/changepass/:id", function (req, res) {
   const id = req.params.id;
-  res.render("changepass", { id }); // Assuming your EJS file is named "changepw.ejs"
+  res.render("changepass",  {nav:true}, { id }); // Assuming your EJS file is named "changepw.ejs"
 });
 
 // Change Password Route - POST
@@ -123,6 +202,15 @@ router.post("/changepass/:id", multer.none(), async function (req, res, next) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
+});
+
+
+router.post("/fileupload", isLoggedIn,upload.single("image"), async function (req, res, next) {
+ 
+ const user =await userModel.findOne({username: req.session.passport.user})
+  user.profileImage = req.file.filename;
+   await user.save();
+   res.redirect("/profile");
 });
 
 

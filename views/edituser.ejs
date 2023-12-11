@@ -1,0 +1,10 @@
+<%- include("partials/header.ejs")%>
+<form class="m-auto w-25 mt-5" action="/edit/<%= user._id %>" method="post">
+
+   <input class="form-control mb-3" type="text" value="<%= user.username%>" placeholder="username" name="username"> 
+   <input class="form-control mb-3" type="text" value="<%= user.fullname%>" placeholder="fullname" name="fullname">   
+<button class="btn btn-primary w-23">update user</button>
+   
+</form>
+
+<%- include("partials/footer.ejs")%>

@@ -16,10 +16,15 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
 },
+profileImage: {type: String},
+posts:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "posts"
+}]
  
 });
 
 userSchema.plugin(plm)
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('user', userSchema);
 
